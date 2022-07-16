@@ -8,6 +8,7 @@ pub use hangman::Hangman;
 pub const TEXT_SIZE: f32 = 20.0; // smaller the number, the bigger the text
 pub const TEXT_COLOR: Color = WHITE;
 pub const BACKGROUND_COLOR: Color = BLACK;
+pub const GALLOW_COLOR: Color = BEIGE;
 pub const TITLE_TEXT: [&str; 2] = ["Welcome to Hangman!", "Select your difficulty below."];
 
 #[derive(Debug, EnumCountMacro, EnumIter, Copy, Clone)]

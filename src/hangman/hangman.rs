@@ -36,8 +36,10 @@ impl Hangman {
                 self.screen = Screen::Main;
             }
         } else if self.screen == Screen::Main {
-            let letter = self.screen.get_letter();
+            self.screen.draw_gallow();
+            self.screen.draw_keyboard();
 
+            let letter = self.screen.get_letter();
             if letter.is_some() {
                 let letter = letter.unwrap();
             }

@@ -1,7 +1,9 @@
 use macroquad::prelude::*;
 use strum::IntoEnumIterator;
 
-use crate::hangman::{Difficulty, BACKGROUND_COLOR, TEXT_COLOR, TEXT_SIZE, TITLE_TEXT};
+use crate::hangman::{
+    Difficulty, BACKGROUND_COLOR, GALLOW_COLOR, TEXT_COLOR, TEXT_SIZE, TITLE_TEXT,
+};
 
 use super::button::Button;
 
@@ -55,5 +57,43 @@ impl Screen {
 
     pub fn get_letter(&self) -> Option<char> {
         Some('a')
+    }
+
+    pub fn draw_gallow(&self) {
+        // down on right
+        let x = screen_width() / 2.5;
+        let y = screen_height() / 6.0;
+        let w = screen_width() / 40.0;
+        let h = screen_height() / 15.0;
+        draw_rectangle(x, y, w, h, GALLOW_COLOR);
+
+        // down on left
+        let x = screen_width() / 7.0;
+        let y = screen_height() / 6.0;
+        let w = screen_width() / 40.0;
+        let h = screen_height() / 2.5;
+        draw_rectangle(x, y, w, h, GALLOW_COLOR);
+
+        // bar on top
+        let x = screen_width() / 7.0;
+        let y = screen_height() / 6.0;
+        let w = screen_width() / 2.5 + screen_width() / 40.0 - screen_width() / 7.0;
+        let h = screen_height() / 40.0;
+        draw_rectangle(x, y, w, h, GALLOW_COLOR);
+
+        // bar on bottom
+        let x = screen_width() / 7.0 - screen_width() / 20.0;
+        let y = screen_height() / 6.0 + screen_height() / 2.5;
+        let w = screen_width() / 40.0 + screen_width() / 10.0;
+        let h = screen_height() / 40.0;
+        draw_rectangle(x, y, w, h, GALLOW_COLOR);
+    }
+
+    pub fn draw_keyboard(&self) {
+        let characters = [
+            vec!['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+            vec!['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+            vec!['z', 'x', 'c', 'v', 'b', 'n', 'm'],
+        ];
     }
 }
