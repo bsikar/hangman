@@ -1,23 +1,26 @@
-use macroquad::prelude::{
-    draw_rectangle, draw_text, is_mouse_button_pressed, measure_text, mouse_position,
-    screen_height, screen_width, MouseButton,
-};
+use macroquad::prelude::*;
 
-use crate::hangman::{Difficulty, TEXT_COLOR, TEXT_SIZE};
+use crate::hangman::{TEXT_COLOR, TEXT_SIZE};
 
-#[derive(Debug)]
 pub struct Button {
     coordinates: (f32, f32),
     dimensions: (f32, f32),
-    difficulty: Difficulty,
+    text: String,
+    color: Color,
 }
 
 impl Button {
-    pub fn new(coordinates: (f32, f32), dimensions: (f32, f32), difficulty: Difficulty) -> Button {
+    pub fn new(
+        coordinates: (f32, f32),
+        dimensions: (f32, f32),
+        text: String,
+        color: Color,
+    ) -> Button {
         Button {
             coordinates,
             dimensions,
-            difficulty,
+            text,
+            color,
         }
     }
 
@@ -32,11 +35,11 @@ impl Button {
             self.coordinates.1,
             self.dimensions.0,
             self.dimensions.1,
-            self.difficulty.as_color(),
+            self.color,
         );
-        let text_size = measure_text(self.difficulty.as_str(), None, text_size_ratio as u16, 1.0);
+        let text_size = measure_text(&self.text, None, text_size_ratio as u16, 1.0);
         draw_text(
-            self.difficulty.as_str(),
+            &self.text,
             self.coordinates.0 + (self.dimensions.0 / 2.0 - text_size.width / 2.0),
             self.coordinates.1 + (self.dimensions.1 / 2.0 + text_size.height / 2.0),
             text_size_ratio,
@@ -44,7 +47,7 @@ impl Button {
         );
     }
 
-    pub fn was_pressed(&self) -> Option<Difficulty> {
+    pub fn was_pressed(&self) -> Option<String> {
         if is_mouse_button_pressed(MouseButton::Left) {
             let (x, y) = mouse_position();
             if x >= self.coordinates.0
@@ -52,7 +55,7 @@ impl Button {
                 && x <= self.coordinates.0 + self.dimensions.0
                 && y <= self.coordinates.1 + self.dimensions.1
             {
-                return Some(self.difficulty);
+                return Some(self.text.clone());
             }
         }
 

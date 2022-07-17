@@ -7,7 +7,7 @@ use crate::hangman::{
 
 use super::button::Button;
 
-#[derive(Debug, PartialEq)]
+#[derive(PartialEq)]
 pub enum Screen {
     Start,
     Main,
@@ -44,11 +44,16 @@ impl Screen {
             let y = screen_height() / 2.0;
             let w = spacing - gap;
 
-            let button = Button::new((x, y), (w, w), difficulty);
+            let button = Button::new(
+                (x, y),
+                (w, w),
+                difficulty.as_str().to_string(),
+                difficulty.as_color(),
+            );
             button.draw();
 
             if let Some(x) = button.was_pressed() {
-                return Some(x);
+                return Some(Difficulty::from_string(x.as_str()));
             }
         }
 
