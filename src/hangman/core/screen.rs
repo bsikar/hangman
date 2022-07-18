@@ -100,5 +100,37 @@ impl Screen {
             vec!['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
             vec!['z', 'x', 'c', 'v', 'b', 'n', 'm'],
         ];
+        // use 2 for each loops with enumerate
+        // make outer_index have the seperating between the rows
+        // make inner_index have the seperating between the elements in each row
+        //
+        // make each button with:
+        //  pub fn new(
+        //      coordinates: (f32, f32),
+        //      dimensions: (f32, f32),
+        //      text: String,
+        //      color: Color
+        // )
+        //
+        // then call the draw function on the button to display it :) ily no pressure !
+        let offset = 100.0;
+        for (outer_index, row) in characters.iter().enumerate() {
+            for (inner_index, element) in row.iter().enumerate() {
+                let button = Button::new(
+                    (
+                        inner_index as f32 * offset + screen_width() / 10.0,
+                        outer_index as f32 * offset + screen_height() / 1.45,
+                    ),
+                    (75.0, 75.0),
+                    element.to_string(),
+                    RED,
+                );
+                button.draw();
+
+                if let Some(c) = button.was_pressed() {
+                    println!("{c}");
+                }
+            }
+        }
     }
 }
