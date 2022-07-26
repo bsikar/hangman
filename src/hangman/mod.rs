@@ -47,7 +47,7 @@ impl Difficulty {
 }
 
 pub struct Hangman {
-    num_wrong: u8,
+    letters_wrong: Vec<char>,
     word: String,
     guess: Vec<Option<char>>,
     letters: Vec<Option<char>>,
@@ -61,7 +61,7 @@ impl Hangman {
 
         Hangman {
             letters,
-            num_wrong: 0,
+            letters_wrong: vec![],
             word: "".to_string(),
             guess: vec![],
             screen: Screen::Start,
