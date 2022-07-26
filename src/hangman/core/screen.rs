@@ -100,35 +100,30 @@ impl Screen {
             vec!['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
             vec!['z', 'x', 'c', 'v', 'b', 'n', 'm'],
         ];
-        // use 2 for each loops with enumerate
-        // make outer_index have the seperating between the rows
-        // make inner_index have the seperating between the elements in each row
-        //
-        // make each button with:
-        //  pub fn new(
-        //      coordinates: (f32, f32),
-        //      dimensions: (f32, f32),
-        //      text: String,
-        //      color: Color
-        // )
-        //
-        // then call the draw function on the button to display it :) ily no pressure !
-        let offset = 100.0;
-        for (outer_index, row) in characters.iter().enumerate() {
-            for (inner_index, element) in row.iter().enumerate() {
-                let button = Button::new(
-                    (
-                        inner_index as f32 * offset + screen_width() / 10.0,
-                        outer_index as f32 * offset + screen_height() / 1.45,
-                    ),
-                    (75.0, 75.0),
-                    element.to_string(),
-                    RED,
-                );
+
+        // gallow y and h bottom cords
+        let y = screen_height() / 6.0 + screen_height() / 2.5;
+        let h = screen_height() / 40.0;
+        let gallow_height = y + h;
+        let top_gap = (gallow_height / 4.0) / 2.0;
+        let spacing = 1.5;
+
+        for (o, row) in characters.iter().enumerate() {
+            for (i, c) in row.iter().enumerate() {
+                let w = if screen_height() > screen_width() {
+                    screen_width() / 15.0
+                } else {
+                    screen_height() / 15.0
+                };
+                let x = (screen_width() / 2.0) - (w * row.len() as f32 / 2.0 * spacing)
+                    + (w * (i as f32 + 0.14) * spacing);
+                let y = top_gap + gallow_height + (o as f32 * w) + (o as f32 * top_gap / 4.0);
+
+                let button = Button::new((x, y), (w, w), c.to_string(), RED);
                 button.draw();
 
-                if let Some(c) = button.was_pressed() {
-                    println!("{c}");
+                if let Some(x) = button.was_pressed() {
+                    println!("{x}");
                 }
             }
         }
