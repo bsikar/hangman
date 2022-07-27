@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use macroquad::prelude::*;
 use strum::IntoEnumIterator;
 
@@ -7,7 +9,7 @@ use crate::hangman::{
 
 use super::button::Button;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum Screen {
     Start,
     Main,
@@ -60,10 +62,6 @@ impl Screen {
         None
     }
 
-    pub fn get_letter(&self) -> Option<char> {
-        Some('a')
-    }
-
     pub fn draw_gallow(&self) {
         // down on right
         let x = screen_width() / 2.5;
@@ -94,7 +92,7 @@ impl Screen {
         draw_rectangle(x, y, w, h, GALLOW_COLOR);
     }
 
-    pub fn draw_keyboard(&self) {
+    pub fn draw_keyboard(&self, letters: &HashSet<char>) -> Option<char> {
         let characters = [
             vec!['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
             vec!['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
@@ -119,13 +117,19 @@ impl Screen {
                     + (w * (i as f32 + 0.14) * spacing);
                 let y = top_gap + gallow_height + (o as f32 * w) + (o as f32 * top_gap / 4.0);
 
-                let button = Button::new((x, y), (w, w), c.to_string(), RED);
+                let button = Button::new(
+                    (x, y),
+                    (w, w),
+                    c.to_string(),
+                    if letters.contains(c) { RED } else { GRAY },
+                );
                 button.draw();
 
-                if let Some(x) = button.was_pressed() {
-                    println!("{x}");
+                if let Some(c) = button.was_pressed() {
+                    return c.chars().next();
                 }
             }
         }
+        None
     }
 }

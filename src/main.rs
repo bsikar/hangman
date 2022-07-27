@@ -9,6 +9,12 @@ async fn main() {
 
     loop {
         hangman.play();
-        next_frame().await
+        next_frame().await;
+
+        // if esc was pressed break
+        if macroquad::prelude::is_key_pressed(macroquad::prelude::KeyCode::Escape) {
+            break;
+        }
     }
+    println!("{hangman:#?}");
 }

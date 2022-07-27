@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use rand::ChooseRandom;
-use std::{fs::File, io::BufRead, io::BufReader};
+use std::{collections::HashSet, fs::File, io::BufRead, io::BufReader};
 use strum_macros::{EnumCount as EnumCountMacro, EnumIter};
 
 mod core;
@@ -46,18 +46,19 @@ impl Difficulty {
     }
 }
 
+#[derive(Debug)]
 pub struct Hangman {
     letters_wrong: Vec<char>,
     word: String,
     guess: Vec<Option<char>>,
-    letters: Vec<Option<char>>,
+    letters: HashSet<char>,
     screen: Screen,
 }
 
 impl Hangman {
     pub fn new() -> Hangman {
         rand::srand(macroquad::miniquad::date::now() as _);
-        let letters = ('A'..='Z').map(Some).collect();
+        let letters = ('a'..='z').collect();
 
         Hangman {
             letters,
@@ -78,10 +79,18 @@ impl Hangman {
             }
         } else if self.screen == Screen::Main {
             self.screen.draw_gallow();
-            self.screen.draw_keyboard();
+            let letter = self.screen.draw_keyboard(&self.letters);
 
-            let letter = self.screen.get_letter();
-            if let Some(letter) = letter {}
+            if let Some(letter) = letter {
+                if self.letters.contains(&letter) {
+                    self.letters.remove(&letter);
+                    if self.word.contains(letter) {
+                        self.guess.push(Some(letter));
+                    } else {
+                        self.letters_wrong.push(letter);
+                    }
+                }
+            }
         }
     }
 
