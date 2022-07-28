@@ -132,4 +132,74 @@ impl Screen {
         }
         None
     }
+
+    pub fn draw_end_screen(&self) -> bool {
+        clear_background(BACKGROUND_COLOR);
+        let text_size_ratio = if screen_height() > screen_width() {
+            screen_width() / TEXT_SIZE
+        } else {
+            screen_height() / TEXT_SIZE
+        };
+
+        let text = "Game Over!";
+        let text_size = measure_text(text, None, (text_size_ratio * 4.0) as u16, 1.0);
+
+        draw_text(
+            text,
+            screen_width() / 2.0 - text_size.width / 2.0,
+            (screen_height() / 2.0 - text_size.height / 2.0) - 3.0 * text_size_ratio,
+            text_size_ratio * 4.0,
+            TEXT_COLOR,
+        );
+
+        let text = "You Suck!";
+        let text_size = measure_text(text, None, (text_size_ratio * 3.0) as u16, 1.0);
+
+        draw_text(
+            text,
+            screen_width() / 2.0 - text_size.width / 2.0,
+            (screen_height() / 2.0 - text_size.height / 2.0) - 3.0 * text_size_ratio
+                + text_size_ratio * 2.0,
+            text_size_ratio * 3.0,
+            TEXT_COLOR,
+        );
+
+        let spacing = screen_width() / 5.0;
+        let gap = 30.0;
+        let x = spacing * 1.0 + (gap / 2.0);
+        let y = screen_height() / 2.0;
+        let w = spacing - gap;
+
+        let button = Button::new(
+            (x, y),
+            (w, w),
+            "Play Again".to_string(),
+            Difficulty::Easy.as_color(),
+        );
+        button.draw();
+
+        if button.was_pressed().is_some() {
+            return true;
+        }
+
+        let spacing = screen_width() / 5.0;
+        let gap = 30.0;
+        let x = spacing * 3.0 + (gap / 2.0);
+        let y = screen_height() / 2.0;
+        let w = spacing - gap;
+
+        let button = Button::new(
+            (x, y),
+            (w, w),
+            "Quit Game".to_string(),
+            Difficulty::Hard.as_color(),
+        );
+        button.draw();
+
+        if button.was_pressed().is_some() {
+            std::process::exit(0);
+        }
+
+        false
+    }
 }

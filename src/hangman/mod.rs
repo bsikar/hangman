@@ -70,25 +70,39 @@ impl Hangman {
     }
 
     pub fn play(&mut self) {
-        if self.screen == Screen::Start {
-            let difficulty = self.screen.get_difficulty();
+        match self.screen {
+            Screen::Start => {
+                let difficulty = self.screen.get_difficulty();
 
-            if let Some(difficulty) = difficulty {
-                self.word = Self::get_word(difficulty);
-                self.screen = Screen::Main;
+                if let Some(difficulty) = difficulty {
+                    self.word = Self::get_word(difficulty);
+                    self.screen = Screen::Main;
+                }
             }
-        } else if self.screen == Screen::Main {
-            self.screen.draw_gallow();
-            let letter = self.screen.draw_keyboard(&self.letters);
+            Screen::Main => {
+                self.screen.draw_gallow();
+                let letter = self.screen.draw_keyboard(&self.letters);
 
-            if let Some(letter) = letter {
-                if self.letters.contains(&letter) {
-                    self.letters.remove(&letter);
-                    if self.word.contains(letter) {
-                        self.guess.push(Some(letter));
-                    } else {
-                        self.letters_wrong.push(letter);
+                if let Some(letter) = letter {
+                    if self.letters.contains(&letter) {
+                        self.letters.remove(&letter);
+                        if self.word.contains(letter) {
+                            self.guess.push(Some(letter));
+                        } else {
+                            self.letters_wrong.push(letter);
+
+                            if self.letters_wrong.len() == 10 {
+                                self.screen = Screen::End;
+                            }
+                        }
                     }
+                }
+            }
+            Screen::End => {
+                self.screen.draw_gallow();
+                let play_again = self.screen.draw_end_screen();
+                if play_again {
+                    *self = Hangman::new();
                 }
             }
         }
