@@ -13,7 +13,8 @@ use super::button::Button;
 pub enum Screen {
     Start,
     Main,
-    End,
+    Win,
+    Lose,
 }
 
 impl Screen {
@@ -133,7 +134,7 @@ impl Screen {
         None
     }
 
-    pub fn draw_end_screen(&self) -> bool {
+    fn draw_end_screen(&self, upper_text: &str, lower_text: &str) -> bool {
         clear_background(BACKGROUND_COLOR);
         let text_size_ratio = if screen_height() > screen_width() {
             screen_width() / TEXT_SIZE
@@ -141,26 +142,24 @@ impl Screen {
             screen_height() / TEXT_SIZE
         };
 
-        let text = "Game Over!";
-        let text_size = measure_text(text, None, (text_size_ratio * 4.0) as u16, 1.0);
+        let text_size = measure_text(upper_text, None, (text_size_ratio * 4.0) as u16, 1.0);
 
         draw_text(
-            text,
+            upper_text,
             screen_width() / 2.0 - text_size.width / 2.0,
             (screen_height() / 2.0 - text_size.height / 2.0) - 3.0 * text_size_ratio,
             text_size_ratio * 4.0,
             TEXT_COLOR,
         );
 
-        let text = "You Suck!";
-        let text_size = measure_text(text, None, (text_size_ratio * 3.0) as u16, 1.0);
+        let text_size = measure_text(lower_text, None, (text_size_ratio * 2.0) as u16, 1.0);
 
         draw_text(
-            text,
+            lower_text,
             screen_width() / 2.0 - text_size.width / 2.0,
             (screen_height() / 2.0 - text_size.height / 2.0) - 3.0 * text_size_ratio
                 + text_size_ratio * 2.0,
-            text_size_ratio * 3.0,
+            text_size_ratio * 2.0,
             TEXT_COLOR,
         );
 
@@ -201,5 +200,24 @@ impl Screen {
         }
 
         false
+    }
+
+    pub fn draw_win_screen(&self) -> bool {
+        self.draw_end_screen("You Win!", "You Rock!")
+    }
+
+    pub fn draw_lose_screen(&self, word: String) -> bool {
+        self.draw_end_screen("You Lose!", &format!("The word was: {}", word))
+    }
+
+    pub fn draw_rack(&self, word: String, guess: Vec<Option<char>>) {
+        // gallow y and h bottom cords
+        let y = screen_height() / 6.0 + screen_height() / 2.5;
+        let h = screen_height() / 40.0;
+        let gallow_height = y + h;
+        let top_gap = (gallow_height / 4.0) / 2.0 + gallow_height;
+        let y = (gallow_height + top_gap) / 2.0;
+
+        draw_line(0.0, y, screen_width(), y, 10.0, GRAY);
     }
 }

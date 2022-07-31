@@ -81,27 +81,39 @@ impl Hangman {
             }
             Screen::Main => {
                 self.screen.draw_gallow();
+                self.screen.draw_rack(self.word.clone(), self.guess.clone());
                 let letter = self.screen.draw_keyboard(&self.letters);
 
                 if let Some(letter) = letter {
                     if self.letters.contains(&letter) {
                         self.letters.remove(&letter);
                         if self.word.contains(letter) {
-                            self.guess.push(Some(letter));
+                            let occurence = self.word.matches(letter).count();
+                            (0..occurence).for_each(|_| self.guess.push(Some(letter)));
                         } else {
                             self.letters_wrong.push(letter);
 
                             if self.letters_wrong.len() == 10 {
-                                self.screen = Screen::End;
+                                self.screen = Screen::Lose;
                             }
                         }
                     }
+                    println!("{:#?}", self);
+                }
+
+                if self.guess.len() == self.word.len() {
+                    self.screen = Screen::Win;
                 }
             }
-            Screen::End => {
+            Screen::Win => {
                 self.screen.draw_gallow();
-                let play_again = self.screen.draw_end_screen();
-                if play_again {
+                if self.screen.draw_win_screen() {
+                    *self = Hangman::new();
+                }
+            }
+            Screen::Lose => {
+                self.screen.draw_gallow();
+                if self.screen.draw_lose_screen(self.word.clone()) {
                     *self = Hangman::new();
                 }
             }
