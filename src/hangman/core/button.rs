@@ -38,13 +38,37 @@ impl Button {
             self.color,
         );
         let text_size = measure_text(&self.text, None, text_size_ratio as u16, 1.0);
-        draw_text(
-            &self.text,
-            self.coordinates.0 + (self.dimensions.0 / 2.0 - text_size.width / 2.0),
-            self.coordinates.1 + (self.dimensions.1 / 2.0 + text_size.height / 2.0),
-            text_size_ratio,
-            TEXT_COLOR,
-        );
+
+        // if the text is too big split it into two lines
+        let words = self.text.split(' ').collect::<Vec<&str>>();
+        if text_size.width > self.dimensions.0 {
+            // we can assume that there are only two words
+            let distance = self.dimensions.0 / 2.0;
+            let text_size = measure_text(words[0], None, text_size_ratio as u16, 1.0);
+            draw_text(
+                words[0],
+                self.coordinates.0 + distance - text_size.width / 2.0,
+                (self.coordinates.1 + distance) - text_size.height / 2.0,
+                text_size_ratio,
+                TEXT_COLOR,
+            );
+            let text_size = measure_text(words[1], None, text_size_ratio as u16, 1.0);
+            draw_text(
+                words[1],
+                self.coordinates.0 + distance - text_size.width / 2.0,
+                self.coordinates.1 + distance + text_size_ratio,
+                text_size_ratio,
+                TEXT_COLOR,
+            );
+        } else {
+            draw_text(
+                &self.text,
+                self.coordinates.0 + (self.dimensions.0 / 2.0 - text_size.width / 2.0),
+                self.coordinates.1 + (self.dimensions.1 / 2.0 + text_size.height / 2.0),
+                text_size_ratio,
+                TEXT_COLOR,
+            );
+        }
     }
 
     pub fn was_pressed(&self) -> Option<String> {

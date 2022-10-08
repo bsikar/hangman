@@ -7,10 +7,17 @@ mod core;
 use crate::hangman::core::screen::Screen;
 
 pub const TEXT_SIZE: f32 = 20.0; // smaller the number, the bigger the text
-pub const TEXT_COLOR: Color = WHITE;
-pub const BACKGROUND_COLOR: Color = BLACK;
-pub const GALLOW_COLOR: Color = BEIGE;
+pub const TEXT_COLOR: Color = color_u8!(197, 194, 154, 255);
+pub const BACKGROUND_COLOR: Color = color_u8!(23, 23, 23, 255);
+pub const GALLOW_COLOR: Color = color_u8!(156, 119, 86, 255);
+pub const EASY_GREEN: Color = color_u8!(123, 119, 86, 255);
+pub const MEDIUM_YELLOW: Color = color_u8!(156, 119, 86, 255);
+pub const HARD_RED: Color = color_u8!(156, 85, 86, 255);
+pub const BUTTON_RED: Color = HARD_RED;
+pub const BUTTON_GRAY: Color = color_u8!(40, 37, 38, 255);
+pub const HANGMAN_COLOR: Color = color_u8!(111, 108, 90, 255);
 pub const TITLE_TEXT: [&str; 2] = ["Welcome to Hangman!", "Select your difficulty below."];
+pub const MAX_WRONG: usize = 6;
 
 #[derive(Debug, EnumCountMacro, EnumIter, Copy, Clone)]
 pub enum Difficulty {
@@ -39,9 +46,9 @@ impl Difficulty {
 
     pub fn as_color(&self) -> Color {
         match *self {
-            Self::Easy => color_u8!(51, 112, 33, 255),
-            Self::Medium => color_u8!(145, 138, 35, 255),
-            Self::Hard => color_u8!(158, 43, 43, 255),
+            Self::Easy => EASY_GREEN,
+            Self::Medium => MEDIUM_YELLOW,
+            Self::Hard => HARD_RED,
         }
     }
 }
@@ -70,6 +77,7 @@ impl Hangman {
     }
 
     pub fn play(&mut self) {
+        self.screen = Screen::Main;
         match self.screen {
             Screen::Start => {
                 let difficulty = self.screen.get_difficulty();
@@ -81,6 +89,7 @@ impl Hangman {
             }
             Screen::Main => {
                 self.screen.draw_gallow();
+                self.screen.draw_person(self.letters_wrong.len());
                 let letter = self.screen.draw_keyboard(&self.letters);
 
                 if let Some(letter) = letter {
@@ -91,7 +100,7 @@ impl Hangman {
                         } else {
                             self.letters_wrong.push(letter);
 
-                            if self.letters_wrong.len() == 10 {
+                            if self.letters_wrong.len() == MAX_WRONG {
                                 self.screen = Screen::End;
                             }
                         }
