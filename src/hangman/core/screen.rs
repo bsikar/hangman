@@ -158,7 +158,7 @@ impl Screen {
         );
     }
 
-    pub fn draw_end_screen(&self) -> bool {
+    pub fn draw_end_screen(&self, did_win: bool) -> bool {
         let text_size_ratio = if screen_height() > screen_width() {
             screen_width() / TEXT_SIZE
         } else {
@@ -176,7 +176,7 @@ impl Screen {
             TEXT_COLOR,
         );
 
-        let text = "You Suck!";
+        let text = if did_win { "You Won!" } else { "You Lost!" };
         let text_size = measure_text(text, None, (text_size_ratio * 3.0) as u16, 1.0);
 
         draw_text(

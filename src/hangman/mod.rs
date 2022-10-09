@@ -77,6 +77,8 @@ impl Hangman {
     }
 
     pub fn play(&mut self) {
+        println!("{}", self.word);
+
         match self.screen.screen_type {
             ScreenType::Start => {
                 let difficulty = self.screen.get_difficulty();
@@ -100,12 +102,18 @@ impl Hangman {
                             self.guess.push(Some(letter));
                         } else {
                             self.letters_wrong.push(letter);
-
-                            if self.letters_wrong.len() == MAX_WRONG {
-                                self.screen.screen_type = ScreenType::End;
-                            }
                         }
                     }
+                }
+                if self.letters_wrong.len() == MAX_WRONG {
+                    self.screen.screen_type = ScreenType::End;
+                }
+                if self
+                    .word
+                    .chars()
+                    .all(|c| self.guess.iter().any(|&l| l == Some(c)))
+                {
+                    self.screen.screen_type = ScreenType::End;
                 }
             }
             ScreenType::End => {
@@ -113,7 +121,9 @@ impl Hangman {
                 self.screen.draw_person(self.letters_wrong.len());
                 self.guess = self.word.chars().map(Some).collect();
                 self.screen.draw_word(&self.guess, self.word.clone());
-                let play_again = self.screen.draw_end_screen();
+                let play_again = self
+                    .screen
+                    .draw_end_screen(self.letters_wrong.len() != MAX_WRONG);
                 if play_again {
                     *self = Hangman::new();
                 }
