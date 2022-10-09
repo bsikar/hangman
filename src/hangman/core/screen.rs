@@ -128,45 +128,37 @@ impl Screen {
         None
     }
 
-    pub fn draw_word(&self, guess: &Vec<Option<char>>, word: String) {
-        let mut x = screen_width() / 2.0;
-        let y = screen_height() / 6.0;
-        let w = screen_width() / 40.0;
-        let h = screen_height() / 20.0;
+    pub fn draw_word(&self, guess: &[Option<char>], word: String) {
+        let bottom_of_gallow = self.gallow.parts.get("bar_on_bottom").unwrap();
+        let y = bottom_of_gallow.y + bottom_of_gallow.h + 10.0;
 
-        let bg = if guess.len() == word.len() {
-            BLACK
+        let text_size_ratio = if screen_height() > screen_width() {
+            screen_width() / TEXT_SIZE
         } else {
-            BACKGROUND_COLOR
+            screen_height() / TEXT_SIZE
         };
 
-        for (i, c) in guess.iter().enumerate() {
-            if i > 0 {
-                x += w;
-            }
-
-            let button = Button::new(
-                (x, y),
-                (w, h),
-                if let Some(c) = c {
-                    c.to_string()
-                } else {
-                    "_".to_string()
-                },
-                bg,
-            );
-            button.draw();
-
-            if i == word.len() - 1 {
-                x += w;
-                let button = Button::new((x, y), (w, h), "".to_string(), bg);
-                button.draw();
+        let mut text = String::new();
+        for c in word.chars() {
+            if guess.contains(&Some(c)) {
+                text.push(c);
+            } else {
+                text.push('_');
             }
         }
+
+        let text_size = measure_text(&text, None, text_size_ratio as u16, 1.0);
+
+        draw_text(
+            &text,
+            screen_width() / 2.0 - text_size.width / 2.0,
+            y,
+            text_size_ratio,
+            TEXT_COLOR,
+        );
     }
 
     pub fn draw_end_screen(&self) -> bool {
-        //clear_background(BACKGROUND_COLOR);
         let text_size_ratio = if screen_height() > screen_width() {
             screen_width() / TEXT_SIZE
         } else {

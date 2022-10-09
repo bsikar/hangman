@@ -111,7 +111,7 @@ impl Hangman {
             ScreenType::End => {
                 self.screen.draw_gallow();
                 self.screen.draw_person(self.letters_wrong.len());
-                self.guess = self.word.chars().map(|c| Some(c)).collect();
+                self.guess = self.word.chars().map(Some).collect();
                 self.screen.draw_word(&self.guess, self.word.clone());
                 let play_again = self.screen.draw_end_screen();
                 if play_again {
