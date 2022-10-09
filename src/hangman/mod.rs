@@ -77,8 +77,6 @@ impl Hangman {
     }
 
     pub fn play(&mut self) {
-        println!("{}", self.word);
-
         match self.screen.screen_type {
             ScreenType::Start => {
                 let difficulty = self.screen.get_difficulty();
