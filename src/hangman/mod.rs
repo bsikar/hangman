@@ -106,11 +106,10 @@ impl Hangman {
                 if self.letters_wrong.len() == MAX_WRONG {
                     self.screen.screen_type = ScreenType::End;
                 }
-                if self
-                    .word
-                    .chars()
-                    .all(|c| self.guess.iter().any(|&l| l == Some(c)))
-                {
+                // use a set to check if the guess is complete
+                let guess_set: HashSet<Option<char>> = self.guess.iter().cloned().collect();
+                let word_set: HashSet<Option<char>> = self.word.chars().map(Some).collect();
+                if guess_set == word_set {
                     self.screen.screen_type = ScreenType::End;
                 }
             }
