@@ -4,7 +4,7 @@ use std::{collections::HashSet, fs::File, io::BufRead, io::BufReader};
 use strum_macros::{EnumCount as EnumCountMacro, EnumIter};
 
 mod core;
-use crate::hangman::core::screen::Screen;
+use crate::hangman::core::screen::{Screen, ScreenType};
 
 pub const TEXT_SIZE: f32 = 20.0; // smaller the number, the bigger the text
 pub const TEXT_COLOR: Color = color_u8!(197, 194, 154, 255);
@@ -72,22 +72,23 @@ impl Hangman {
             letters_wrong: vec![],
             word: "".to_string(),
             guess: vec![],
-            screen: Screen::Start,
+            screen: Screen::new(),
         }
     }
 
     pub fn play(&mut self) {
-        self.screen = Screen::Main;
-        match self.screen {
-            Screen::Start => {
+        self.screen.screen_type = ScreenType::Main; // XXX tmp for testing
+        match self.screen.screen_type {
+            ScreenType::Start => {
                 let difficulty = self.screen.get_difficulty();
 
                 if let Some(difficulty) = difficulty {
                     self.word = Self::get_word(difficulty);
-                    self.screen = Screen::Main;
+                    self.screen.screen_type = ScreenType::Main;
                 }
             }
-            Screen::Main => {
+            ScreenType::Main => {
+                clear_background(BACKGROUND_COLOR);
                 self.screen.draw_gallow();
                 self.screen.draw_person(self.letters_wrong.len());
                 let letter = self.screen.draw_keyboard(&self.letters);
@@ -101,13 +102,13 @@ impl Hangman {
                             self.letters_wrong.push(letter);
 
                             if self.letters_wrong.len() == MAX_WRONG {
-                                self.screen = Screen::End;
+                                self.screen.screen_type = ScreenType::End;
                             }
                         }
                     }
                 }
             }
-            Screen::End => {
+            ScreenType::End => {
                 self.screen.draw_gallow();
                 let play_again = self.screen.draw_end_screen();
                 if play_again {

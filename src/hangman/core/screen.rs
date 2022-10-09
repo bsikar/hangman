@@ -4,20 +4,36 @@ use macroquad::prelude::*;
 use strum::IntoEnumIterator;
 
 use crate::hangman::{
-    Difficulty, BACKGROUND_COLOR, BUTTON_GRAY, BUTTON_RED, GALLOW_COLOR, HANGMAN_COLOR, TEXT_COLOR,
-    TEXT_SIZE, TITLE_TEXT,
+    Difficulty, BACKGROUND_COLOR, BUTTON_GRAY, BUTTON_RED, TEXT_COLOR, TEXT_SIZE, TITLE_TEXT,
 };
 
 use super::button::Button;
+use crate::hangman::core::gallow::Gallow;
+use crate::hangman::core::person::Person;
+
+#[derive(PartialEq, Debug)]
+pub struct Screen {
+    person: Person,
+    gallow: Gallow,
+    pub screen_type: ScreenType,
+}
 
 #[derive(Eq, PartialEq, Debug)]
-pub enum Screen {
+pub enum ScreenType {
     Start,
     Main,
     End,
 }
 
 impl Screen {
+    pub fn new() -> Self {
+        Self {
+            person: Person::new(),
+            gallow: Gallow::new(),
+            screen_type: ScreenType::Start,
+        }
+    }
+
     pub fn get_difficulty(&self) -> Option<Difficulty> {
         clear_background(BACKGROUND_COLOR);
 
@@ -63,35 +79,8 @@ impl Screen {
         None
     }
 
-    pub fn draw_gallow(&self) {
-        clear_background(BACKGROUND_COLOR);
-        // down on right
-        let x = screen_width() / 2.5;
-        let y = screen_height() / 6.0;
-        let w = screen_width() / 40.0;
-        let h = screen_height() / 15.0;
-        draw_rectangle(x, y, w, h, GALLOW_COLOR);
-
-        // down on left
-        let x = screen_width() / 7.0;
-        let y = screen_height() / 6.0;
-        let w = screen_width() / 40.0;
-        let h = screen_height() / 2.5;
-        draw_rectangle(x, y, w, h, GALLOW_COLOR);
-
-        // bar on top
-        let x = screen_width() / 7.0;
-        let y = screen_height() / 6.0;
-        let w = screen_width() / 2.5 + screen_width() / 40.0 - screen_width() / 7.0;
-        let h = screen_height() / 40.0;
-        draw_rectangle(x, y, w, h, GALLOW_COLOR);
-
-        // bar on bottom
-        let x = screen_width() / 7.0 - screen_width() / 20.0;
-        let y = screen_height() / 6.0 + screen_height() / 2.5;
-        let w = screen_width() / 40.0 + screen_width() / 10.0;
-        let h = screen_height() / 40.0;
-        draw_rectangle(x, y, w, h, GALLOW_COLOR);
+    pub fn draw_gallow(&mut self) {
+        self.gallow.draw();
     }
 
     pub fn draw_keyboard(&self, letters: &HashSet<char>) -> Option<char> {
@@ -209,80 +198,7 @@ impl Screen {
         false
     }
 
-    pub fn draw_person(&self, num_wrong: usize) {
-        // list of function pointers
-        let draw_list = [
-            Self::draw_head,
-            Self::draw_body,
-            Self::draw_left_arm,
-            Self::draw_right_arm,
-            Self::draw_left_leg,
-            Self::draw_right_leg,
-        ];
-
-        for i in draw_list {
-            (i)(self);
-        }
-
-        for i in draw_list.iter().take(num_wrong) {
-            (i)(self);
-        }
-    }
-
-    // 1
-    pub fn draw_head(&self) {
-        // down on right
-        let bar_down_x = screen_width() / 2.5 + screen_width() / 40.0;
-        let bar_down_y = screen_height() / 6.0 + screen_height() / 15.0;
-
-        let x = bar_down_x - screen_width() / 80.0;
-        let y = bar_down_y + screen_width() / 30.0;
-        let r = if screen_height() > screen_width() {
-            screen_width() / 20.0
-        } else {
-            screen_height() / 20.0
-        };
-        draw_circle(x, y, r, HANGMAN_COLOR);
-    }
-
-    // 2
-    pub fn draw_body(&self) {
-        let x = screen_width() / 2.5;
-        let w = screen_width() / 40.0;
-        let bar_down_y = screen_height() / 6.0 + screen_height() / 15.0;
-
-        let y = bar_down_y;
-        let h = screen_height() / 5.0;
-        draw_rectangle(x, y, w, h, HANGMAN_COLOR);
-    }
-
-    // 3
-    pub fn draw_left_arm(&self) {}
-
-    // 4
-    pub fn draw_right_arm(&self) {}
-
-    // 5
-    pub fn draw_left_leg(&self) {
-        let x1 = screen_width() / 2.45;
-        let y1 = screen_height() / 9.0 + screen_height() / 15.0 + screen_height() / 4.0;
-        let w = screen_width() / 40.0;
-
-        let x2 = screen_width() / 3.0;
-        let y2 = screen_height() / 1.75 - screen_height() / 15.0;
-
-        draw_line(x1, y1, x2, y2, w, HANGMAN_COLOR);
-    }
-
-    // 6
-    pub fn draw_right_leg(&self) {
-        let x1 = screen_width() / 2.45;
-        let y1 = screen_height() / 9.0 + screen_height() / 15.0 + screen_height() / 4.0;
-        let w = screen_width() / 40.0;
-
-        let x2 = screen_width() / 2.0;
-        let y2 = screen_height() / 1.75 - screen_height() / 15.0;
-
-        draw_line(x1, y1, x2, y2, w, HANGMAN_COLOR);
+    pub fn draw_person(&mut self, num_wrong: usize) {
+        self.person.draw(num_wrong);
     }
 }
