@@ -4,12 +4,12 @@ use std::collections::HashMap;
 
 use crate::hangman::GALLOW_COLOR;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Part {
-    x: f32,
-    y: f32,
-    w: f32,
-    h: f32,
+    pub x: f32,
+    pub y: f32,
+    pub w: f32,
+    pub h: f32,
 }
 
 #[derive(PartialEq, Debug)]

@@ -17,7 +17,7 @@ pub const BUTTON_RED: Color = HARD_RED;
 pub const BUTTON_GRAY: Color = color_u8!(40, 37, 38, 255);
 pub const HANGMAN_COLOR: Color = color_u8!(111, 108, 90, 255);
 pub const TITLE_TEXT: [&str; 2] = ["Welcome to Hangman!", "Select your difficulty below."];
-pub const MAX_WRONG: usize = 6;
+pub const MAX_WRONG: usize = 9;
 
 #[derive(Debug, EnumCountMacro, EnumIter, Copy, Clone)]
 pub enum Difficulty {
@@ -77,7 +77,6 @@ impl Hangman {
     }
 
     pub fn play(&mut self) {
-        self.screen.screen_type = ScreenType::Main; // XXX tmp for testing
         match self.screen.screen_type {
             ScreenType::Start => {
                 let difficulty = self.screen.get_difficulty();
@@ -91,6 +90,7 @@ impl Hangman {
                 clear_background(BACKGROUND_COLOR);
                 self.screen.draw_gallow();
                 self.screen.draw_person(self.letters_wrong.len());
+                self.screen.draw_word(&self.guess, self.word.clone());
                 let letter = self.screen.draw_keyboard(&self.letters);
 
                 if let Some(letter) = letter {
@@ -110,6 +110,9 @@ impl Hangman {
             }
             ScreenType::End => {
                 self.screen.draw_gallow();
+                self.screen.draw_person(self.letters_wrong.len());
+                self.guess = self.word.chars().map(|c| Some(c)).collect();
+                self.screen.draw_word(&self.guess, self.word.clone());
                 let play_again = self.screen.draw_end_screen();
                 if play_again {
                     *self = Hangman::new();

@@ -128,8 +128,45 @@ impl Screen {
         None
     }
 
+    pub fn draw_word(&self, guess: &Vec<Option<char>>, word: String) {
+        let mut x = screen_width() / 2.0;
+        let y = screen_height() / 6.0;
+        let w = screen_width() / 40.0;
+        let h = screen_height() / 20.0;
+
+        let bg = if guess.len() == word.len() {
+            BLACK
+        } else {
+            BACKGROUND_COLOR
+        };
+
+        for (i, c) in guess.iter().enumerate() {
+            if i > 0 {
+                x += w;
+            }
+
+            let button = Button::new(
+                (x, y),
+                (w, h),
+                if let Some(c) = c {
+                    c.to_string()
+                } else {
+                    "_".to_string()
+                },
+                bg,
+            );
+            button.draw();
+
+            if i == word.len() - 1 {
+                x += w;
+                let button = Button::new((x, y), (w, h), "".to_string(), bg);
+                button.draw();
+            }
+        }
+    }
+
     pub fn draw_end_screen(&self) -> bool {
-        clear_background(BACKGROUND_COLOR);
+        //clear_background(BACKGROUND_COLOR);
         let text_size_ratio = if screen_height() > screen_width() {
             screen_width() / TEXT_SIZE
         } else {
@@ -199,6 +236,6 @@ impl Screen {
     }
 
     pub fn draw_person(&mut self, num_wrong: usize) {
-        self.person.draw(num_wrong);
+        self.person.draw(num_wrong, &self.gallow);
     }
 }
