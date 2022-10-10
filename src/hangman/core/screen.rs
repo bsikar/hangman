@@ -122,6 +122,8 @@ impl Screen {
 
                 if let Some(c) = button.was_pressed() {
                     return c.chars().next();
+                } else if let Some(c) = get_char_pressed() {
+                    return Some(c);
                 }
             }
         }
