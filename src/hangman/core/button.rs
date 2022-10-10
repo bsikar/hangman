@@ -52,14 +52,16 @@ impl Button {
                 text_size_ratio,
                 TEXT_COLOR,
             );
-            let text_size = measure_text(words[1], None, text_size_ratio as u16, 1.0);
-            draw_text(
-                words[1],
-                self.coordinates.0 + distance - text_size.width / 2.0,
-                self.coordinates.1 + distance + text_size_ratio,
-                text_size_ratio,
-                TEXT_COLOR,
-            );
+            if words.len() > 1 {
+                let text_size = measure_text(words[1], None, text_size_ratio as u16, 1.0);
+                draw_text(
+                    words[1],
+                    self.coordinates.0 + distance - text_size.width / 2.0,
+                    self.coordinates.1 + distance + text_size_ratio,
+                    text_size_ratio,
+                    TEXT_COLOR,
+                );
+            }
         } else {
             draw_text(
                 &self.text,
