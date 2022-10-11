@@ -1,9 +1,15 @@
 [package]
 name = "hangman"
 version = "0.1.0"
+authors = ["Brighton Sikarskie <bsikar@tuta.io>"]
+description = "A simple GUI hangman game"
+readme = "README.md"
+homepage = "https://bsikar.github.io/hangman"
+repository = "https://github.com/bsikar/hangman"
+license = "MIT"
+keywords = ["hangman", "game", "gui"]
+categories = ["game", "gui", "games"]
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 macroquad = "0.3.20"
