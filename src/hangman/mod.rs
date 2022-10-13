@@ -59,6 +59,7 @@ pub struct Hangman {
     word: String,
     guess: Vec<Option<char>>,
     letters: HashSet<char>,
+    key_pressed: Option<char>,
     screen: Screen,
 }
 
@@ -72,11 +73,13 @@ impl Hangman {
             letters_wrong: vec![],
             word: "".to_string(),
             guess: vec![],
+            key_pressed: None,
             screen: Screen::new(),
         }
     }
 
     pub fn play(&mut self) {
+        self.key_pressed = get_char_pressed();
         match self.screen.screen_type {
             ScreenType::Start => {
                 let difficulty = self.screen.get_difficulty();
@@ -91,7 +94,11 @@ impl Hangman {
                 self.screen.draw_gallow();
                 self.screen.draw_person(self.letters_wrong.len());
                 self.screen.draw_word(&self.guess, self.word.clone());
-                let letter = self.screen.draw_keyboard(&self.letters);
+                let mut letter = self.screen.draw_keyboard(&self.letters);
+
+                if let Some(key) = self.key_pressed {
+                    letter = Some(key.to_ascii_lowercase());
+                }
 
                 if let Some(letter) = letter {
                     if self.letters.contains(&letter) {
